@@ -1,0 +1,64 @@
+from django.http import HttpResponseRedirect
+from article.models import User, Article
+from django.shortcuts import render
+
+def index(request):
+    return render(request, 'index.html')
+
+def signup(request):
+    if request.method == 'POST':
+        # 회원정보 저장
+        email = request.POST.get('email')
+        name = request.POST.get('name')
+        pwd = request.POST.get('pwd')
+        user = User(email=email, name=name, pwd=pwd)
+        user.save()
+        return HttpResponseRedirect('/index/')
+
+    return render(request, 'signup.html')
+
+
+def signin(request):
+    if request.method == 'POST':
+        # 회원정보 조회
+        email = request.POST.get('email')
+        pwd = request.POST.get('pwd')
+        try:
+        # select * from user where email=? and pwd=?
+         user = User.objects.get(email=email, pwd=pwd)
+         request.session['email'] = email
+         return render(request, 'signin_success.html')
+        except:
+         return render(request, 'signin_fail.html')
+    return render(request, 'signin.html')
+
+
+def signout(request):
+    del request.session['email'] # 개별 삭제
+    request.session.flush() # 전체 삭제
+    return HttpResponseRedirect('/index/')
+
+
+def write(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        try:
+            email = request.session['email']
+            # select * from user where email = ?
+            user = User.objects.get(email=email)
+            # insert into article (title, content, user_id) values (?, ?, ?)
+            article = Article(title=title, content=content, user=user)
+            article.save()
+            return render(request, 'write_success.html')
+        except:
+            return render(request, 'write_fail.html')
+    return render(request, 'write.html')
+
+def list(request):
+# select * from article order by id desc
+    article_list = Article.objects.order_by('-id')
+    context = {
+        'article_list' : article_list
+    }
+  return render(request, 'list.html', context)
