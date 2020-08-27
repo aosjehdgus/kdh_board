@@ -71,3 +71,22 @@ def detail(request, id):
         'article' : article
     }
     return render(request, 'detail.html', context)
+
+def update(request, id):
+# select * from article where id = ?
+    article = Article.objects.get(id=id)
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        try:
+        # update article set title = ?, content = ? where id = ?
+            article.title = title
+            article.content = content
+            article.save()
+            return render(request, 'update_success.html')
+        except:
+            return render(request, 'update_fail.html')
+    context = {
+        'article' : article
+    }
+    return render(request, 'update.html', context)
