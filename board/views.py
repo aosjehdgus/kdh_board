@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from article.models import User, Article
 from django.shortcuts import render
 from django.http import JsonResponse # JSON 응답
@@ -157,4 +157,33 @@ def send_mail(from_email, to_email, msg):
     msg['To'] = from_email # 수신 이메일
     smtp.sendmail(from_email, from_email, msg.as_string())
     smtp.quit()
+
+import time 
+def upload(request):
+    if request.method == 'POST':
+        upload_file = request.FILES['upload_file']
+
+            
+            # 파일 저장
+            # file = open('','')
+            # file.write('내용')
+            # 앞에 슬래시 / 가 붙어있으면, 내가 접근할 수 있는 가장 최상위 경로
+            # ../ 바로 위 경로를 뜻함
+            # '/home/'
+        file_name = upload_file.name
+        # 만약 파일명이 중복되었다면.. image.jpg
+        #                            image   .jpg
+        idx = file_name.find('.')
+        file1 = file_name[0:idx]      #image
+        file2 = file_name[idx:]        # .jpg
+        sep = time.time()             # unix time 밀리세컨드
+        file_name = file1 + str(sep) + file2 
+
+        with open('article/static/' + file_name, 'wb') as file:
+            for chunk in upload_file.chunks():
+                file.write(chunk)
+
+        return HttpResponse(upload_file.name)
+
+    return render(request, 'upload.html')
 
