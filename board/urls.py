@@ -12,6 +12,7 @@ urlpatterns = [
     path('article/list/', views.list),
     path('article/detail/<int:id>/', views.detail),
     path('article/update/<int:id>/', views.update),
+    path('article/delete/<int:id>/', views.delete),
 
 ]
 

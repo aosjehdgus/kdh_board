@@ -90,3 +90,12 @@ def update(request, id):
         'article' : article
     }
     return render(request, 'update.html', context)
+
+def delete(request, id):
+    try:
+    # select * from article where id = ?
+        article = Article.objects.get(id=id)
+        article.delete()
+        return render(request, 'delete_success.html')
+    except:
+        return render(request, 'delete_fail.html')
