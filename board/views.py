@@ -50,8 +50,36 @@ def write(request):
             email = request.session['email']
             # select * from user where email = ?
             user = User.objects.get(email=email)
+
+            #########################################
+            upload_file = request.FILES['upload_file']
+
+                
+                # 파일 저장
+                # file = open('','')
+                # file.write('내용')
+                # 앞에 슬래시 / 가 붙어있으면, 내가 접근할 수 있는 가장 최상위 경로
+                # ../ 바로 위 경로를 뜻함
+                # '/home/'
+            file_name = upload_file.name
+            # 만약 파일명이 중복되었다면.. image.jpg
+            #                            image   .jpg
+            idx = file_name.find('.')
+            file1 = file_name[0:idx]      #image
+            file2 = file_name[idx:]        # .jpg
+            sep = time.time()             # unix time 밀리세컨드
+            file_name = file1 + str(sep) + file2 
+
+            with open('article/static/' + file_name, 'wb') as file:
+                for chunk in upload_file.chunks():
+                    file.write(chunk)
+
+            #########################################
+
+
             # insert into article (title, content, user_id) values (?, ?, ?)
             article = Article(title=title, content=content, user=user)
+            article.file_name = '/static/' + file_name
             article.save()
             return render(request, 'write_success.html')
         except:
@@ -186,4 +214,8 @@ def upload(request):
         return HttpResponse(upload_file.name)
 
     return render(request, 'upload.html')
+
+
+def portfolio(request):
+        return render(request, 'portfolio.html')
 
