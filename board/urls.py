@@ -4,8 +4,10 @@ import board.views as views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
     path('index/', views.index),
     path('', views.index),
+    
     path('signup/', views.signup),
     path('signin/', views.signin),
     path('signout/', views.signout),
@@ -14,6 +16,8 @@ urlpatterns = [
     path('article/detail/<int:id>/', views.detail),
     path('article/update/<int:id>/', views.update),
     path('article/delete/<int:id>/', views.delete),
+    path('map/', views.map),
+    path('map_data/', views.map_data),
 
 ]
 
